@@ -1,198 +1,164 @@
-# 題目一執行契約：財經文章到短影音的完整 Workflow
+# 題目一：文章到短影音 Workflow
 
-> 本文件補充 [`task1.md`](./task1.md) 的執行定義。`task1.md` 保留主管交辦的目標與範圍；本文件用來界定目前證據、完整 workflow、工具責任，以及下一個最小實驗。
+> **下一步：** 選一篇代表性文章，先完成 `Content Brief → Story Package → Production Contract`，再沿用現有生成與 HyperFrames handoff，做出第一支約 30 秒完整影片。
 
-## 先做這件事
+![五層 Workflow：目前只完成 Layer 4 到 Layer 5 的技術接線，下一步先補 Storyline](./assets/task1-video-workflow.svg)
 
-拿一篇代表性文章，先完成 `Content Brief → Story Package → Production Contract`，再沿用已能工作的生成與 HyperFrames handoff，做出第一支約 30 秒完整影片。
+## 30 秒讀完
 
-**目前進度：** Layer 4 → 5 的技術接線已跑通；Layer 1 → 3 尚未完成。
+| 你要知道的事 | 結論 |
+|---|---|
+| 現在跑通了什麼？ | **Layer 4 → 5 的技術接線**：生成候選能交給 HyperFrames 合成。 |
+| 還缺什麼？ | **Layer 1 → 3**：內容意圖、Storyline／Copy、製作責任契約。 |
+| ComfyUI 在哪裡？ | 主要在 **Layer 4 素材生成與修復**；它不是完整 workflow。 |
+| 五層都要跑嗎？ | 要。五層都有最小產物，才能稱為端到端 workflow 跑通。 |
+| 下一步做什麼？ | 先補 Story Package，不再增加 ComfyUI 節點。 |
 
-**這輪完成定義：** 一支影片、五層中間產物、理解與事實 QA 全部留下。這只能證明端到端可行，還不能證明穩定量產。
+## 這輪只做 3 步
 
-## 一、本輪 Decision Lock
+1. **鎖內容：** 決定觀眾、單一 takeaway、必留事實與禁止延伸的主張。
+2. **鎖故事：** 寫出 4 beats、完整旁白、畫面意圖與來源。
+3. **做成片：** 分配生成／固定素材責任，產出、局部修復、HyperFrames 合成並 QA。
 
-### 要決定什麼
+## 怎樣才算完成？
 
-1. 什麼情況可以稱為「文章到影片的 workflow 已跑通」。
-2. Storyline 與 copywriting 在生成前至少要產出什麼。
-3. ComfyUI、生成模型、HyperFrames 與人工分別負責什麼。
-4. 下一個實驗應補哪一段證據，而不是繼續增加工具或節點。
+| 狀態 | 完成條件 | 目前 |
+|---|---|---|
+| 技術接線跑通 | 生成片段可交給 HyperFrames 並輸出 | **已完成** |
+| 端到端可行 | 一篇文章走完五層，留下中間產物與 QA | **下一步** |
+| 流程穩定 | 同一模板跨多篇文章可重跑 | 尚未驗證 |
+| 可以量產 | 跨模板批次測試，失敗率、成本與人工量可接受 | 尚未驗證 |
 
-### 本輪不決定什麼
+單篇成功只能證明「可行」，不能證明「穩定」或「可量產」。
 
-- 不鎖定 ComfyUI 或任何特定模型為正式 production stack。
-- 不宣稱目前已證明每週可量產 30–50 支。
-- 不把單支影片成功視為角色一致性、跨題材穩定性或觀眾理解已成立。
-- 不在這份文件中選定唯一的影片敘事模板。
+---
 
-### 停止條件
+<details>
+<summary><strong>展開：五層各自要交付什麼</strong></summary>
 
-先用一篇代表性文章完成一支約 30 秒的端到端影片，保留五層中間產物並完成理解、事實與製作 QA。完成後才進入多文章、多模板與批次穩定性驗證。
+### Layer 1｜內容意圖
 
-## 二、目前證據支持到哪裡
+回答：**給誰看？看完只要記住什麼？**
 
-目前 preflight 實際支持的是：
+輸出 `Content Brief`：
 
-> 既定 reference → 生成兩個候選片段 → 人工選片 → 交給 HyperFrames 疊加固定文字與版面 → 輸出影片
+- 原始文章與可引用事實。
+- 目標觀眾與一句話 takeaway。
+- 必須保留的數字與因果邊界。
+- 不可延伸或暗示的主張。
 
-因此，目前可以稱為：
+### Layer 2｜Storyline ＋ Copywriting
+
+回答：**資訊要按什麼順序被理解？**
+
+輸出 `Story Package`：
+
+1. 一句話 premise 與敘事形式。
+2. 4 beats：Hook → 發生什麼 → 為什麼重要 → 結論。
+3. 完整旁白稿；以實際 TTS 時間控制片長。
+4. 每段畫面意圖、螢幕文字與事實來源。
+5. 禁止生成的錯誤陳述、投資暗示與無來源數字。
+
+沒有這一層，後面就會變成抽籤：單一畫面可能好看，但敘事與節奏無法穩定重現。
+
+### Layer 3｜製作責任鎖定
+
+回答：**哪些必須固定？哪些允許生成？**
+
+輸出 `Production Contract`：
+
+- Storyboard／ShotSpec、秒數與素材來源。
+- 生成素材、固定素材與人工 Gate 的分界。
+- 角色、場景與攝影語言的 continuity 規則。
+- repair／regenerate 規則。
+- 最終 QA 與接受／退回條件。
+
+固定主播或重複角色是核心時，影片生成前先建立 character reference kit。若採 data-first 解釋片，角色可以只是可替換 B-roll。
+
+### Layer 4｜素材生成與修復
+
+**ComfyUI 主要在這裡。**它可承接：
+
+- 人物、場景、B-roll 與視覺比喻生成。
+- reference、ControlNet、LoRA 等一致性控制。
+- inpainting、局部重繪、放大與補幀。
+- 可重用的多階段生成 workflow。
+
+單支端到端實驗可直接使用模型 API。當角色一致性、局部修復或多階段控制成為重複需求，ComfyUI 的價值才會提高。
+
+### Layer 5｜HyperFrames ＋ QA
+
+HyperFrames 優先承接必須確定、可重現的部分：
+
+- 財經事實、數字、圖表與來源。
+- 字幕、品牌、safe zone 與 disclaimer。
+- timeline、轉場、聲音時間點與排版。
+- 生成片段與固定元件的合成。
+- 輸出格式與最終 QA。
+
+</details>
+
+<details>
+<summary><strong>展開：目前證據能支持到哪裡</strong></summary>
+
+目前 preflight 實際流程：
+
+> 既定 reference → 生成兩個候選 → 人工選片 → HyperFrames 疊加固定圖文 → 輸出
+
+因此可以說：
 
 > **Generation-to-HyperFrames integration preflight 已跑通。**
 
-目前還不能稱為：
+不能說：
 
 > **Article-to-video production workflow 已跑通。**
 
-因為這次 preflight 尚未驗證內容面：
+尚未驗證：
 
-- 如何從原文決定單一觀眾 takeaway。
-- Storyline、copywriting、旁白與節奏如何形成。
-- 約 30 秒多段內容能否維持前後連貫。
-- 沒看過原文的人是否真的看得懂。
+- 原文如何形成 takeaway、storyline 與旁白。
+- 約 30 秒多段敘事是否連貫且看得懂。
+- 角色一致性、局部修復及失敗重做策略。
+- 跨文章、跨模板與批次生成是否穩定。
+- 實際人工時間、成本與溝通量。
 
-也尚未驗證製作面：
+</details>
 
-- 角色與場景一致性、局部修復及失敗重做策略。
-- 不同文章、不同模板與批次生成是否穩定。
-- 所需人工時間、成本與行銷／剪輯往返是否足夠低。
+<details>
+<summary><strong>展開：工具責任怎麼分</strong></summary>
 
-## 三、五層完整 Workflow
+| 責任 | 優先承接者 |
+|---|---|
+| 觀眾、takeaway、storyline、旁白 | 內容流程＋必要人工 Gate |
+| 人物、場景、B-roll、視覺比喻 | 生成模型；複雜鏈路可由 ComfyUI 編排 |
+| 角色一致性與局部修復 | ComfyUI／模型能力 |
+| 數字、圖表、字幕、品牌、來源 | HyperFrames |
+| 最終接受／退回 | 人工 QA |
 
-完整 workflow 不是單一工具，而是五層有明確輸入、控制條件與輸出。
+工具可以替換；各層的輸入／輸出契約不能消失。
 
-### Layer 1：內容意圖
+</details>
 
-**要回答的問題：** 這支影片是給誰看，以及看完只需要記住什麼？
+<details>
+<summary><strong>展開：網路 Best Practices 怎麼用</strong></summary>
 
-最小輸出：
+網路上已有大量短影音敘事、角色一致性、局部修復與 ComfyUI production 做法。它們應用來補強各層的控制方法，不是用更多工具取代內容決策。
 
-- 原始文章與可引用事實。
-- 目標觀眾。
-- 一句話 takeaway。
-- 必須保留的數字、事件與因果邊界。
-- 不可延伸或不可暗示的主張。
+正確比較順序：
 
-### Layer 2：Storyline ＋ Copywriting
+1. 先固定同一份 `Story Package`。
+2. 再固定同一份 `Production Contract`。
+3. 最後比較 ComfyUI、直接 API 或託管服務。
 
-**要回答的問題：** 這些資訊應以什麼順序被理解，而不是模型這次剛好生成什麼？
+否則比較到的可能只是不同隨機輸出，而不是 workflow 能力。
 
-第一版不需要完整編劇系統，但每支約 30 秒影片至少要有一份 `Story Package`：
+</details>
 
-1. 一句話 premise／takeaway，以及採用的敘事形式。
-2. 四個 beats：Hook → 發生什麼 → 為什麼重要 → 結論。
-3. 完整旁白稿；以實際 TTS 朗讀時間控制片長，不用字數猜測秒數。
-4. 每個 beat 的畫面意圖、螢幕文字與事實來源。
-5. 禁止生成的錯誤陳述、投資暗示與無來源數字。
-
-這一層決定影片品質的下限。若沒有先鎖定，後面的素材生成容易退化成抽籤：單一畫面可能好看，但敘事、節奏與事實無法穩定重現。
-
-### Layer 3：製作責任鎖定
-
-**要回答的問題：** 哪些內容可以變動，哪些內容必須可重現？
-
-最小輸出是一份 `Production Contract`：
-
-- Storyboard／ShotSpec、每段秒數及所需素材來源。
-- 生成素材、固定素材與人工判斷的責任分界。
-- 角色、場景、色彩與攝影語言的 continuity 規則。
-- 每類失敗的 repair／regenerate 規則。
-- 最終 QA 與接受／退回條件。
-
-若影片以固定主播或重複角色為核心，應在生成影片前先建立角色 reference kit，例如正面／側面參考、服裝、場景、禁止變動項目與可接受變化。若採 data-first 的財經解釋片，角色可以只是可替換 B-roll，不必為了使用 ComfyUI 而強行建立角色系統。
-
-### Layer 4：素材生成與修復
-
-**ComfyUI 主要位於這一層。**
-
-可能包含：
-
-- 人物表演、場景、B-roll 與視覺比喻生成。
-- reference、ControlNet、LoRA 或其他一致性控制。
-- inpainting、局部重繪、放大、補幀及重算局部鏡頭。
-- 將可重用的多階段生成流程固定為 workflow。
-
-ComfyUI 是生成與修復的工作台，不是完整產線，也不負責替內容決定 storyline。若下一個實驗只是驗證單支 30 秒影片能否端到端完成，直接使用模型 API 也可以；當角色一致性、局部修復或多階段控制成為重複需求時，ComfyUI 的價值才會明顯提高。
-
-### Layer 5：HyperFrames ＋ QA
-
-HyperFrames 優先承接必須確定、可重現及可程式驗證的部分：
-
-- 財經事實、數字、圖表與來源標示。
-- 字幕、標題、品牌、safe zone 與 disclaimer。
-- timeline、轉場、聲音時間點與最終排版。
-- 將生成片段與固定元件組成可重跑的成片。
-- 輸出格式與最終 QA。
-
-生成模型提供可變的視覺素材；HyperFrames 不應負責補救一個尚未成立的 storyline。
-
-## 四、責任邊界
-
-| 責任 | 優先承接者 | 原則 |
-|---|---|---|
-| 觀眾、takeaway、storyline、旁白 | 內容流程＋必要人工 Gate | 先鎖意圖，再生成素材 |
-| 人物、場景、B-roll、視覺比喻 | 生成模型；複雜鏈路可由 ComfyUI 編排 | 允許變動，但需受 ShotSpec 與 reference 約束 |
-| 角色一致性與局部修復 | ComfyUI／模型能力 | 僅在內容形式真的需要角色時投入 |
-| 數字、圖表、字幕、品牌與來源 | HyperFrames | 必須確定、可重現，不交給畫面模型自由生成 |
-| 最終接受／退回 | 人工 QA | 判斷理解性、事實正確與成品可用性 |
-
-工具可以替換；各層的輸入／輸出契約不能因換工具而消失。
-
-## 五、兩種「跑通」必須分開
-
-### A. 技術接線跑通
-
-證明生成素材可以進入 HyperFrames，完成固定圖文疊加與輸出。目前 preflight 大致位於 Layer 4 → Layer 5。
-
-### B. 端到端 workflow 跑通
-
-從文章開始，五層各有最小產物，最後得到一支完整影片：
-
-> 原文 → Content Brief → Story Package → Production Contract／ShotSpec → 生成與修復 → HyperFrames 合成 → QA 成片
-
-單篇成功只能證明端到端可行；要宣稱「穩定」或「可量產」，仍需跨文章、跨模板及批次測試。
-
-## 六、下一個最小實驗
-
-下一步不是再加更多 ComfyUI 節點，也不是先做大量供應商 bake-off，而是沿用已能工作的生成與 HyperFrames handoff，補齊 Layer 1–3，完成第一支約 30 秒端到端影片。
-
-### 實驗輸入
-
-- 一篇具有明確事件、關鍵數字與結論的代表性財經文章。
-- 先選一種敘事形式，不同時比較所有模板。
-
-### 必須保留的產物
+## 下一輪要留下的 5 份證據
 
 1. `Content Brief`
 2. `Story Package`
 3. `Production Contract／ShotSpec`
-4. 生成素材、參數、失敗與 repair 紀錄
-5. HyperFrames composition、最終影片與完整 QA 紀錄
+4. 生成參數、失敗與 repair 紀錄
+5. HyperFrames composition、成片與完整 QA
 
-### 建議驗收問題
-
-- 沒讀過原文的人，能否說出影片的單一核心訊息？
-- 關鍵數字、事件與結論是否能逐項回查原文？
-- 旁白、字幕與畫面是否在約 30 秒內形成完整敘事？
-- 失敗是否能只重做局部素材，而非整支影片推倒重來？
-- 實際人工介入、生成時間與成本是多少？據此決定是否值得拿第二篇文章重跑。
-
-通過這一輪後，再進入：
-
-1. 同一模板跨多篇文章的穩定性。
-2. 3–4 種內容模板的適配範圍。
-3. ComfyUI、直接 API 或託管服務的執行架構比較。
-4. 批次產量、失敗率、單支成本與人工介入量。
-
-## 七、如何使用網路 Best Practices
-
-網路上已有大量關於短影音敘事、角色一致性、局部修復、ComfyUI workflow 與 production deployment 的做法。研究目的應是補強各層的控制方法與驗收規則，不是直接複製一張節點圖，也不是用更多工具取代內容決策。
-
-外部案例可以回答「通常如何做」，但本題仍需用公司的文章、目標觀眾與成片標準回答：
-
-- 哪些 storyline 模板適合不同財經文章。
-- 哪些內容必須由 HyperFrames 固定。
-- 哪些視覺問題值得交給 ComfyUI 解決。
-- 哪一條路在本題上真的更快、更穩、成本更低。
-
-因此，工具比較應發生在同一份 Story Package 與 Production Contract 之後，否則比較到的可能只是不同隨機輸出，而不是 workflow 能力。
+本文件補充 [`task1.md`](./task1.md) 的執行定義；原檔繼續作為主管交辦的任務 truth。
